@@ -46,7 +46,9 @@ def loop():
         gas_value = sensor_analogico.read()
         is_toxic = sensor_digital.read()
 
-        print(LOG_MSG.format(current_time, f"A: {gas_value:.3f} \t D: {is_toxic}"))
+        if DEBUG:
+            print(LOG_MSG.format(current_time, f"A: {gas_value:.3f} \t D: {is_toxic}"))
+            
         if gas_value >= SENSOR_DANGER_ZONE and current_time >= next_execution_time:
             if is_toxic:
                 print("\t[URGENTE] Nivel de gás tóxico está prejudicial à saúde!")
