@@ -3,16 +3,12 @@
 #########################################################################################
 
 try:
-    from pyfirmata import Arduino, util
-except ModuleNotFoundError:
+    import pyfirmata
+    import requests
+except:
     import os
-    print("módulo pyfirmata não encontrado, instalando localmente...")
-    os.system("pip install pyfirmata")
-finally:
-    from pyfirmata import Arduino, util
-
-from settings import *
-from datetime import datetime
+    print("[MAIN.SCRIPT] Installing dependency from project...")
+    os.system("python -m pip -q install -r ./requirements.txt")
 
 
 def setup():
@@ -39,6 +35,7 @@ def loop():
     import time
 
     next_execution_time = datetime.now()
+
     while True:
         time.sleep(LOOP_DELAY)
 
@@ -51,12 +48,17 @@ def loop():
             
         if gas_value >= SENSOR_DANGER_ZONE and current_time >= next_execution_time:
             if is_toxic:
-                print("\t[URGENTE] Nivel de gás tóxico está prejudicial à saúde!")
+                send_message(MSG_PERIGO)
             else:
-                print("\t[ALERTA] Nível de gás tóxico acima do normal.")
+                send_message(MSG_ALERTA)
+
             next_execution_time = datetime.now() + MESSAGE_DELAY
 
 
 if __name__ == '__main__':
-    setup()
+    from pyfirmata import Arduino, util
+    from settings import *
+    from datetime import datetime
+    from telegram_hook import send_message
 
+    setup()
